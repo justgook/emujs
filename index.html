@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        .wrapper {
+            width: 100vw;
+            aspect-ratio: 16 / 9;
+            max-width: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        #popup {
+            background: linear-gradient(35deg, red, purple);
+            color: #f0fdfa;
+            font-weight: bold;
+            position: fixed;
+            left: 50%;
+            top: calc(50vw / 16 * 9);
+            transform: translate(-50%, -50%);
+            text-align: center;
+            padding: 1em;
+            border-radius: 1em;
+            animation: anim 1s linear 0.5s 1 forwards;
+            animation-name: none;
+        }
+
+        @keyframes anim {
+            0% {
+                opacity: 1
+            }
+            99% {
+                opacity: 0
+            }
+            100% {
+                display: none;
+                opacity: 0
+            }
+        }
+
+        select {
+            /* Reset */
+            appearance: none;
+            border: 0;
+            outline: 0;
+            font: inherit;
+            /* Personalize */
+            width: 20em;
+            height: 3em;
+            padding: 0 4em 0 1em;
+            background: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg) no-repeat right 0.8em center / 1.4em,
+            linear-gradient(to left, rgba(255, 255, 255, 0.3) 3em, rgba(255, 255, 255, 0.2) 3em);
+            color: white;
+            border-radius: 0.25em;
+            box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            /* <option> colors */
+
+
+        }
+
+        /* Remove focus outline */
+        select:focus {
+            outline: none;
+        }
+
+        /* Remove IE arrow */
+        select::-ms-expand {
+            display: none;
+        }
+
+        option {
+            color: inherit;
+            background-color: #320a28;
+        }
+    </style>
+</head>
+<body>
+<canvas class="wrapper" id="gameCanvas"></canvas>
+<div id="popup"></div>
+<script type="module">
+    import { RunDemo } from "./RunDemo.js"
+
+    const canvas = document.getElementById("gameCanvas")
+    const samples = ["basics/hello-world",
+        "basics/image",
+        "bench",
+        "bitmap/cube 3D",
+        "bitmap/partic",
+        "console",
+        "demo/bad-apple",
+        "demo/starfield-donut",
+        "flash-save",
+        "fx/h-int/scaling",
+        "fx/h-int/wobble",
+        "fx/hilight-shadow",
+        "fx/scroll/linescroll",
+        "joy-test",
+        "megawifi",
+        "multitasking",
+        "platformer",
+        "sonic",
+        "sound",
+        "xgm-player"]
+
+    const select = document.createElement("select")
+    const option = document.createElement("option")
+    option.text = "select game"
+    option.disabled = true
+    option.selected = true
+    select.appendChild(option)
+    for (const game of samples) {
+        const url = `https://raw.githubusercontent.com/Stephane-D/SGDK/master/sample/${game}/out/rom.bin`
+        const option = document.createElement("option")
+        option.value = url
+        option.text = game
+        select.appendChild(option)
+    }
+    const popup = document.getElementById("popup")
+
+    const updateText = (data) => {
+        popup.innerText = data
+        popup.style.animationName = "none"
+        requestAnimationFrame(() => {
+            popup.style.animationName = "anim"
+        })
+    }
+    select.addEventListener("change", (e) => {
+        RunDemo(canvas, updateText, e.target.value)
+        e.target.remove()
+    })
+
+    popup.appendChild(select)
+
+
+</script>
+
+</body>
+</html>
